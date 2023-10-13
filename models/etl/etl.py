@@ -5,13 +5,13 @@ from snowflake.connector.pandas_tools import write_pandas
 
 def snowflake_connect():
     conn = snowflake.connector.connect(
-        account = 'NNB96911.US-EAST-1',
-        user = 'SHREYANGIPR25',
-        database = 'SIGNMETADATA',
-        schema = 'SIGNMETADATA_FINAL',
-        password = 'Khushipr250103*',
-        warehouse = 'TRANSFORMER_WAREHOUSE',
-        role = 'TRANSFORMER',
+        account = '',
+        user = '',
+        database = '',
+        schema = '',
+        password = '',
+        warehouse = '',
+        role = '',
     )
     return conn
 
