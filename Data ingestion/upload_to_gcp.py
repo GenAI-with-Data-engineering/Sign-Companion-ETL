@@ -2,10 +2,10 @@ import os
 from google.cloud import storage
 
 # Set your Google Cloud Storage credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "orbital-outpost-401915-ff694c125d79.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "driven-country-403320-944f01d4c897.json"
 
 # Replace these with your own values
-bucket_name = "signlanguagevideos"
+bucket_name = "signcompanion-videos"
 source_directory = "data/videos"
 
 def upload_videos_to_gcs(bucket_name, source_directory):
