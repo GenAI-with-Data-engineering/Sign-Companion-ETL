@@ -5,3 +5,9 @@ logs/
 .venv
 data/
 driven-country-403320-944f01d4c897.json
+.ipynb_checkpoints/
+.signcompanion
+.env
+.test
+api/I3D_Sign_Language_Classification/__pycache__
+api/I3D_Sign_Language_Classification/.i3

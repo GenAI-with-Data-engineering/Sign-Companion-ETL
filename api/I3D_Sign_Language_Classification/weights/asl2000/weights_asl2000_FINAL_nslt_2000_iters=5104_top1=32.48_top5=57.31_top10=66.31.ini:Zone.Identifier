@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://huggingface.co/spaces/cedssama/I3D_Sign_Language_Classification/tree/main/weights/asl2000
+HostUrl=https://huggingface.co/spaces/cedssama/I3D_Sign_Language_Classification/resolve/main/weights/asl2000/FINAL_nslt_2000_iters%3D5104_top1%3D32.48_top5%3D57.31_top10%3D66.31.ini?download=true
