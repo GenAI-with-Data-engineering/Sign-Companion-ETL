@@ -84,82 +84,80 @@ def main():
     st.title("Sign Companion")
     st.header("Upload an audio file or Paste a youtube link")
     
-    col1, col2 = st.columns(2)
-    with col1:
-        source = st.radio("Select audio source", ("Upload file", "Enter Youtube link"))
 
-        #Upload File section (SignIt - Part 1)
-        if source == "Upload file":
+    source = st.radio("Select audio source", ("Upload file", "Enter Youtube link"))
 
-            uploaded_file = st.file_uploader("Upload an audio file (mp3, mp4, m4a)", type=["mp3", "mp4", "m4a"])
-            sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
-            upload = st.button('Upload file',on_click=callback)
+    #Upload File section (SignIt - Part 1)
+    if source == "Upload file":
 
-            if (upload and sign_language):
-                #Adding sign language(ASL/ISL/BSL) to the end of file name
-                file_name = uploaded_file.name.split(".")[0] + "_"+ sign_language + "." +uploaded_file.name.split(".")[1]
-                s3_key = f'raw_input/{file_name}'
+        uploaded_file = st.file_uploader("Upload an audio file (mp3, mp4, m4a)", type=["mp3", "mp4", "m4a"])
+        sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
+        upload = st.button('Upload file',on_click=callback)
 
-                with open(os.path.join(UPLOAD_DIR, file_name), "wb") as f:
-                    f.write(uploaded_file.read())
+        if (upload and sign_language):
+            #Adding sign language(ASL/ISL/BSL) to the end of file name
+            file_name = uploaded_file.name.split(".")[0] + "_"+ sign_language + "." +uploaded_file.name.split(".")[1]
+            s3_key = f'raw_input/{file_name}'
 
-                st.success("File Uploaded successfully!")
+            with open(os.path.join(UPLOAD_DIR, file_name), "wb") as f:
+                f.write(uploaded_file.read())
+
+            st.success("File Uploaded successfully!")
+            
+            st.audio(uploaded_file)
+            
+            file_contents = uploaded_file.read()
+            s3client.put_object(Bucket=signcompanion_bucket, Key=s3_key, Body=file_contents)
+            status = triggerDAG(file_name)
+            if status == 200:
+                st.write("DAG Triggered")
+            else:
+                st.warning("DAG failed to trigger")
+
+            
+
+        else:
+            st.warning("Please upload a file and select the language to translate to")
+
+    elif source == "Enter Youtube link":
+        youtube_link = st.text_input('Paste the youtube link here', 'www.youtube.com/xxx')
+        file_name = st.text_input('Enter a file name for the link','Default')
+
+        sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
+        upload = st.button('Upload file')
+        if upload and sign_language:
+
+            if file_name:
+                file_name = file_name + "_"+ sign_language
+                local_file_path = UPLOAD_DIR + "/" +file_name
+                download_yt_video(youtube_link,file_name)
+                st.write(f"Audio saved at {UPLOAD_DIR}")
                 
-                st.audio(uploaded_file)
-                
-                file_contents = uploaded_file.read()
-                s3client.put_object(Bucket=signcompanion_bucket, Key=s3_key, Body=file_contents)
-                status = triggerDAG(file_name)
+                # Upload the audio file to S3
+                s3_prefix = "raw_input/"
+                s3_file_key = s3_prefix + file_name + ".m4a"
+                with open(f"{local_file_path}.m4a", 'rb') as f:
+                    s3client.put_object(Bucket=signcompanion_bucket, Key=s3_file_key, Body=f)                
+                st.write(f"File uploaded to S3 bucket {signcompanion_bucket} with key {s3_file_key}")
+                status = triggerDAG(f"{file_name}.m4a")
                 if status == 200:
                     st.write("DAG Triggered")
-                else:
-                    st.warning("DAG failed to trigger")
-
-                
-
             else:
-                st.warning("Please upload a file and select the language to translate to")
+                st.error("Please enter a file name to save the audio.")
 
-        elif source == "Enter Youtube link":
-            youtube_link = st.text_input('Paste the youtube link here', 'www.youtube.com/xxx')
-            file_name = st.text_input('Enter a file name for the link','Default')
 
-            sign_language = st.selectbox("Select the sign language to translate to",options=ALLOWED_SIGN_LANGUAGES)
-            upload = st.button('Upload file')
-            if upload and sign_language:
 
-                if file_name:
-                    file_name = file_name + "_"+ sign_language
-                    local_file_path = UPLOAD_DIR + "/" +file_name
-                    download_yt_video(youtube_link,file_name)
-                    st.write(f"Audio saved at {UPLOAD_DIR}")
-                    
-                    # Upload the audio file to S3
-                    s3_prefix = "raw_input/"
-                    s3_file_key = s3_prefix + file_name + ".m4a"
-                    with open(f"{local_file_path}.m4a", 'rb') as f:
-                        s3client.put_object(Bucket=signcompanion_bucket, Key=s3_file_key, Body=f)                
-                    st.write(f"File uploaded to S3 bucket {signcompanion_bucket} with key {s3_file_key}")
-                    status = triggerDAG(f"{file_name}.m4a")
-                    if status == 200:
-                        st.write("DAG Triggered")
-                else:
-                    st.error("Please enter a file name to save the audio.")
-   
-   
-   
-   
-   
-   
-    with col2:
-        video_directory = "data/audio_files/final_sign_video"
-        file_names = [file for file in os.listdir(video_directory) if file.endswith(('.mp4', '.avi', '.mkv'))]
+    
+    st.header("Converted Sign Language Video")
+    
+    video_directory = "data/audio_files/final_sign_video"
+    file_names = [file for file in os.listdir(video_directory) if file.endswith(('.mp4', '.avi', '.mkv'))]
 
-        option = st.selectbox('Select from available videos', options=file_names)
+    option = st.selectbox('Select from available videos', options=file_names)
 
-        if option:
-            video_path = os.path.join(video_directory, option)
-            st.video(video_path)
+    if option:
+        video_path = os.path.join(video_directory, option)
+        st.video(video_path)
 
 if __name__ == "__main__":
     main()
