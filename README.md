@@ -1,15 +1,8 @@
-Welcome to your new dbt project!
-
-### Using the starter project
-
-Try running the following commands:
-- dbt run
-- dbt test
+Sign Companion, an innovative web application, employs advanced algorithms and machine learning to address the communication gap between communities. Tailored for the hearing-impaired, it enhances accessibility to diverse media, fostering a more inclusive digital experience.
+![image](https://github.com/GenAI-with-Data-engineering/Sign-Companion-ETL/assets/32273709/ade58989-fc2d-46a0-9c11-8143ac5ae9e4)
 
 
-### Resources:
-- Learn more about dbt [in the docs](https://docs.getdbt.com/docs/introduction)
-- Check out [Discourse](https://discourse.getdbt.com/) for commonly asked questions and answers
-- Join the [dbt community](http://community.getbdt.com/) to learn from other analytics engineers
-- Find [dbt events](https://events.getdbt.com) near you
-- Check out [the blog](https://blog.getdbt.com/) for the latest news on dbt's development and best practices
+Audio/Video to Sign Language - Converts spoken language to sign language. This feature can assist individuals who are proficient in sign language and want a sign language transcription for an audio/video file.
+Chat2Audio AI - Utilizing a CNN-based model for sign language detection, followed by integration with ChatGPT for a comprehensive question-answering system.
+Learning Modules -  The user can view a curated list of sign language videos that we have leveraged in our application
+Practice Modules - The user can upload a video of him doing sign language and this module can help learn more efficiently.
